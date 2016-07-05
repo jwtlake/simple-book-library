@@ -1,0 +1,16 @@
+{
+  "name": "simple-book-library",
+  "version": "1.0.0",
+  "description": "simple es6 book library",
+  "main": "index.js",
+  "scripts": {
+    "build": "WEBPACK_ENV=build webpack",
+    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
+    "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+  },
+  "author": "Jonathan Lake",
+  "license": "ISC",
+  "devDependencies": {
+    "babel": "^6.5.2"
+  }
+}
