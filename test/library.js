@@ -1,6 +1,9 @@
 import { expect } from 'chai';
 import { Library, Shelf, Book, config} from '../lib/simple-book-library.js';
 
+//disable class logging to keep test results clean
+config.logPassiveOutput = false;
+
 describe('A Library', () => {
 	
 	describe('has shelfs', () => {

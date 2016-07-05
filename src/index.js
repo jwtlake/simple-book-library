@@ -1,7 +1,8 @@
-// defaults for constructors if no values are provided
+// default config settings
 export let config = {
 	defaultShelfNumber: 8,
-	defaultSlotNumber: 10
+	defaultSlotNumber: 10,
+	logPassiveOutput: true
 }
 
 /* Library Object */ 
@@ -11,6 +12,7 @@ export const Library = class Library {
 		this.shelfs = [];
 		this.maxShelf = (shelfNumb - 1);
 		this.maxSlot = (slotNumb - 1);
+		this.logPassiveOutput = config.logPassiveOutput;
 		this._createShelfs(shelfNumb, slotNumb);
 	}
 	
@@ -25,14 +27,16 @@ export const Library = class Library {
 	_isValidSelection(shelfNumb,slotNumb) {
 
 		// check for valid shelf selection
-		if(shelfNumb < 0 || shelfNumb > this.maxShelf){
-			console.log(`Invalid shelf selection! Please choose a shelf number between 0 and ${this.maxShelf}`);
+		if(shelfNumb < 0 || shelfNumb > this.maxShelf) {
+			if(this.logPassiveOutput)
+				console.log(`Invalid shelf selection! Please choose a shelf number between 0 and ${this.maxShelf}`);
 			return false;
 		}
 		
 		// check for valid slot selection
-		if(slotNumb < 0 || slotNumb > this.maxSlot){
-			console.log(`Invalid slot selection! Please choose a slot number between 0 and ${this.maxSlot}`);
+		if(slotNumb < 0 || slotNumb > this.maxSlot) {
+			if(this.logPassiveOutput)
+				console.log(`Invalid slot selection! Please choose a slot number between 0 and ${this.maxSlot}`);
 			return false;
 		}
 		// return valid
@@ -40,13 +44,15 @@ export const Library = class Library {
 	}
 	
 	shelf(book,shelfNumb,slotNumb) {
-		if(this._isValidSelection) {
+		if(this._isValidSelection(shelfNumb,slotNumb)) {
 			const result = this.shelfs[shelfNumb]._putBook(book,slotNumb);
 			if(result === true){
-				console.log(`Book: ${book.name} added to shelf ${shelfNumb}, slot ${slotNumb}`)
+				if(this.logPassiveOutput) 
+					console.log(`Book: ${book.name} added to shelf ${shelfNumb}, slot ${slotNumb}`)
 				return true;
 			}else{
-				console.log(`shelf ${shelfNumb}, slot ${slotNumb} already has book ${result.name}`)
+				if(this.logPassiveOutput) 
+					console.log(`shelf ${shelfNumb}, slot ${slotNumb} already has book ${result.name}`)
 				return result; //return book in current slot
 			}
 		}else{
@@ -55,13 +61,15 @@ export const Library = class Library {
 	}
 	
 	unshelf(shelfNumb,slotNumb) {
-		if(this._isValidSelection) {
+		if(this._isValidSelection(shelfNumb,slotNumb)) {
 			const requestedBook = this.shelfs[shelfNumb]._removeBook(slotNumb);
 			if(requestedBook){
-				console.log(`Book: ${requestedBook.name} removed from shelf ${shelfNumb}, slot ${slotNumb}`);
+				if(this.logPassiveOutput) 
+					console.log(`Book: ${requestedBook.name} removed from shelf ${shelfNumb}, slot ${slotNumb}`);
 				return requestedBook;
 			}else{
-				console.log(`shelf ${shelfNumb}, slot ${slotNumb} is empty`);
+				if(this.logPassiveOutput) 
+					console.log(`shelf ${shelfNumb}, slot ${slotNumb} is empty`);
 				return false;
 			}
 		}else{
@@ -74,6 +82,7 @@ export const Library = class Library {
 	}
 
 	render() {
+		// Note: Excluding if(this.logPassiveOutput) check in this case because this is an explicit request
 		// header
 		console.log('## Library');
 		const slotHeaders = Array.apply(null, {length: (this.maxSlot + 1)}).map(Number.call, Number).join('  ');

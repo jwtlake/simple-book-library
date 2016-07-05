@@ -1,27 +1,35 @@
-// import { Library, Book } from './lib/simple-book-library.js';
-var simple = require('./lib/simple-book-library.js');
+// es6 imports also supported 
+//import { Library, Book } from './lib/simple-book-library.js';
 
-var util = require('util');
+let simple = require('./lib/simple-book-library.js');
 
-//create new library (numbOfShelves, numbOfSlots)
-var MyLibary = new simple.Library(10,5);
+// create new library (numbOfShelves, numbOfSlots)
+let MyLibary = new simple.Library(10,5);
 
-//create a books (name)
-var book1 = new simple.Book('How to javascript');
-var book2 = new simple.Book('How to javascript while being watched');
-var book3 = new simple.Book('Another Book');
+// if you want to dissable passive console.logs on libary actions
+//MyLibary.logPassiveOutput = false; 
 
-//put the book in the libary (Book, shelfNumb, rowNumber)
-MyLibary.shelf(book1,1,4);
-MyLibary.shelf(book2,2,1);
-MyLibary.shelf(book3,1,4);
+//output libary
+MyLibary.render();
 
-// console.log(MyLibary.shelfs[1].getSlots());
+// create a books (name)
+let book1 = new simple.Book('A Game of Thrones');
+let book2 = new simple.Book('A Clash of Kings');
+let book3 = new simple.Book('A Storm of Swords');
 
-const result = MyLibary.shelfs[1]._removeBook(4);
-console.log(MyLibary.shelfs[1].slots[4])
-console.log(result)
+//put the books in the libary (Book, shelfNumb, rowNumber)
+MyLibary.shelf(book1,11,1) // out of bounds
+MyLibary.shelf(book1,1,5) // out of bounds
+MyLibary.shelf(book1,1,4); // valid
+MyLibary.shelf(book2,2,1); // valid
+MyLibary.shelf(book3,1,4); // occupied
 
-//output full array
-// MyLibary.render();
-// console.log(util.inspect(MyLibary, {showHidden: false, depth: null}));
+//move book
+let bookInHand = MyLibary.unshelf(1,4);
+MyLibary.shelf(bookInHand,2,4);
+
+//try again
+MyLibary.shelf(book3,1,4); // valid
+
+//output libary
+MyLibary.render();
