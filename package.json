@@ -2,15 +2,25 @@
   "name": "simple-book-library",
   "version": "1.0.0",
   "description": "simple es6 book library",
-  "main": "index.js",
+  "main": "lib/simple-book-library.js",
   "scripts": {
-    "build": "WEBPACK_ENV=build webpack",
-    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
+    "build": "webpack --mode=build",
+    "dev": "webpack --progress --colors --watch --mode=dev",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwtlake/simple-book-library.git"
   },
   "author": "Jonathan Lake",
   "license": "ISC",
   "devDependencies": {
-    "babel": "^6.5.2"
+    "babel": "^6.5.2",
+    "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.9.0",
+    "mocha": "^2.5.3",
+    "webpack": "^1.13.1"
   }
 }
