@@ -1,10 +1,16 @@
+// defaults for constructors if no values are provided
+export let config = {
+	defaultShelfNumber: 8,
+	defaultSlotNumber: 10
+}
+
 /* Library Object */ 
 export const Library = class Library {
 
-	constructor(shelfNumb = 8, slotNumb = 10) {
+	constructor(shelfNumb = config.defaultShelfNumber, slotNumb = config.defaultSlotNumber) {
 		this.shelfs = [];
-		this.maxShelf = (this.shelfNumb - 1);
-		this.maxSlot = (this.slotNumb - 1);
+		this.maxShelf = (shelfNumb - 1);
+		this.maxSlot = (slotNumb - 1);
 		this._createShelfs(shelfNumb, slotNumb);
 	}
 	
@@ -17,15 +23,15 @@ export const Library = class Library {
 	}
 
 	_isValidSelection(shelfNumb,slotNumb) {
-		
+
 		// check for valid shelf selection
-		if(shelfNumb <= 0 || shelfNumb > this.maxShelf){
+		if(shelfNumb < 0 || shelfNumb > this.maxShelf){
 			console.log(`Invalid shelf selection! Please choose a shelf number between 0 and ${this.maxShelf}`);
 			return false;
 		}
 		
 		// check for valid slot selection
-		if(slotNumb <= 0 || slotNumb > this.maxSlot){
+		if(slotNumb < 0 || slotNumb > this.maxSlot){
 			console.log(`Invalid slot selection! Please choose a slot number between 0 and ${this.maxSlot}`);
 			return false;
 		}
@@ -35,7 +41,14 @@ export const Library = class Library {
 	
 	shelf(book,shelfNumb,slotNumb) {
 		if(this._isValidSelection) {
-	 		return this.shelfs[shelfNumb]._putBook(book,slotNumb);
+			const result = this.shelfs[shelfNumb]._putBook(book,slotNumb);
+			if(result === true){
+				console.log(`Book: ${book.name} added to shelf ${shelfNumb}, slot ${slotNumb}`)
+				return true;
+			}else{
+				console.log(`shelf ${shelfNumb}, slot ${slotNumb} already has book ${result.name}`)
+				return result; //return book in current slot
+			}
 		}else{
 			return false;
 		}
@@ -43,7 +56,14 @@ export const Library = class Library {
 	
 	unshelf(shelfNumb,slotNumb) {
 		if(this._isValidSelection) {
-	 		return this.shelfs[shelfNumb]._removeBook(slotNumb);
+			const requestedBook = this.shelfs[shelfNumb]._removeBook(slotNumb);
+			if(requestedBook){
+				console.log(`Book: ${requestedBook.name} removed from shelf ${shelfNumb}, slot ${slotNumb}`);
+				return requestedBook;
+			}else{
+				console.log(`shelf ${shelfNumb}, slot ${slotNumb} is empty`);
+				return false;
+			}
 		}else{
 			return false;
 		}
@@ -56,9 +76,8 @@ export const Library = class Library {
 	render() {
 		// header
 		console.log('## Library');
-		console.log();
-		const slotHeaders = Array.apply(null, {length: this.maxSlot}).map(Number.call, Number).join(' ');
-		console.log(`SLOTS:    ${slotHeaders}`);
+		const slotHeaders = Array.apply(null, {length: (this.maxSlot + 1)}).map(Number.call, Number).join('  ');
+		console.log(`SLOTS:   ${slotHeaders}`);
 		
 		// body
 		for (let [index, selectedShelf] of this.shelfs.entries()) {
@@ -74,7 +93,7 @@ export const Library = class Library {
 /* Shelf Object */ 
 export const Shelf = class Shelf {
 	
-	constructor(slotNumb) {
+	constructor(slotNumb = config.defaultSlotNumber) {
 		this.slots = [];
 		this._createSlots(slotNumb);
 	}
@@ -84,25 +103,23 @@ export const Shelf = class Shelf {
 			this.slots.push(null);
 		}
 	}
-  		
+		
 	_putBook(book,slotNumb) {
-		//check if slot full
-		const isBook = this.slots[slotNumb];
-		if(!isBook){
-			return false;
+		const notEmpty = this.slots[slotNumb];
+		if(notEmpty){
+			return notEmpty;
 		}else{
 			this.slots[slotNumb] = book;
 			return true;
 		}
 	}
 	_removeBook(slotNumb) {
-		const bookToRemove = this.slots[slotNumb];
-		if(!bookToRemove){
-			console.log('There is no book at this location.');
-			return false;
+		const requestedBook = this.slots[slotNumb];
+		if(requestedBook instanceof Book) {
+			this.slots[slotNumb] = null; // clear slot
+			return requestedBook;
 		}else{
-			this.slots[slotNumb] = null;
-			return bookToRemove
+			return false;
 		}
 	}
 
@@ -113,14 +130,14 @@ export const Shelf = class Shelf {
 
 /* Book Object */ 
 export const Book = class Book {
-	constructor(name,haveRead) {
-    this.name = name;
-    this.haveRead = haveRead;
-  }
+	constructor(name = 'Unnamed Book') {
+		this.name = name;
+	}
 }
 
+// Suport for require syntax
 export default {
-  Library: Library,
-  Shelf: Shelf,
-  Book: Book
+	Library: Library,
+	Shelf: Shelf,
+	Book: Book
 }
